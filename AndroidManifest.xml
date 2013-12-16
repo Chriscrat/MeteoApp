@@ -7,7 +7,7 @@
     <uses-sdk
         android:minSdkVersion="10"
         android:targetSdkVersion="18" />
-
+	<uses-permission android:name="android.permission.INTERNET" />    
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -20,8 +20,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="FavOnglet"></activity>
-        <activity android:name="SearchOnglet"></activity>
+        <activity android:name=".FavOnglet"></activity>
+        <activity android:name=".SearchOnglet"></activity>
+        <activity android:name=".Meteo"></activity>
+        <activity android:name=".TodayOnglet"></activity>
+        <activity android:name=".WeekOnglet"></activity>
+        
     </application>
 
 </manifest>

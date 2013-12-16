@@ -8,4 +8,6 @@
         <!-- API 11 theme customizations can go here. -->
     </style>
 <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar" />
+
+    <style name="AppTheme" parent="android:Theme.Light" />
 </resources>

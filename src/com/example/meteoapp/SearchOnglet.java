@@ -3,7 +3,7 @@ package com.example.meteoapp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -87,24 +87,17 @@ public class SearchOnglet extends Activity {
         cityListView.setAdapter(adaptater);
         CityList.getListViewSize(cityListView);
         
-      //Enfin on met un écouteur d'évènement sur notre listView
+        final String CITY_SELECTED = "a_city";
         cityListView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
         	@SuppressWarnings("unchecked")
          	public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-				//on récupère la HashMap contenant les infos de notre item (titre, description, img)
         		HashMap<String, String> map = (HashMap<String, String>) cityListView.getItemAtPosition(position);
-        		//on créer une boite de dialogue
-        		AlertDialog.Builder adb = new AlertDialog.Builder(SearchOnglet.this);
-        		//on attribut un titre à notre boite de dialogue
-        		adb.setTitle("Sélection Item");
-        		//on insère un message à notre boite de dialogue, et ici on affiche le titre de l'item cliqué
-        		adb.setMessage("Votre choix : "+map.get("cityName"));
-        		//on indique que l'on veut le bouton ok à notre boite de dialogue
-        		adb.setPositiveButton("Ok", null);
-        		//on affiche la boite de dialogue
-        		adb.show();
+        		map.get("cityName");
+        		Intent intent = new Intent(SearchOnglet.this, Meteo.class);
+        		intent.putExtra(CITY_SELECTED, map.get("cityName"));        		
+        		startActivity(intent);
         	}
          });
-     }
+        }
 }
