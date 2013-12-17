@@ -85,7 +85,7 @@ public class SearchOnglet extends Activity {
         cityListView = (ListView) findViewById(R.id.cityListView); 
         SimpleAdapter adaptater = new SimpleAdapter (this.getBaseContext(), cityList, R.layout.city_item, new String[] {"cityName", "cityPostalCode"}, new int[] {R.id.cityName, R.id.cityPostalCode});
         cityListView.setAdapter(adaptater);
-        CityList.getListViewSize(cityListView);
+        ListViewClass.getListViewSize(cityListView);
         
         final String CITY_SELECTED = "a_city";
         cityListView.setOnItemClickListener(new OnItemClickListener() {
