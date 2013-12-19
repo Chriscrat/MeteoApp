@@ -30,13 +30,8 @@ public class SearchOnglet extends Activity {
         cityItem = new HashMap<String, String>();
         cityItem.put("cityName", "Ballancourt");
         cityItem.put("cityPostalCode", "91610");
-        cityList.add(cityItem);
- 
-        cityItem = new HashMap<String, String>();
-        cityItem.put("cityName", "Corbeil-Essonne");
-        cityItem.put("cityPostalCode", "91200");
-        cityList.add(cityItem);
- 
+        cityList.add(cityItem); 
+           
         cityItem = new HashMap<String, String>();
         cityItem.put("cityName", "Evry");
         cityItem.put("cityPostalCode", "91000");
@@ -50,13 +45,8 @@ public class SearchOnglet extends Activity {
         cityItem = new HashMap<String, String>();
         cityItem.put("cityName", "Ballancourt");
         cityItem.put("cityPostalCode", "91610");
-        cityList.add(cityItem);
- 
-        cityItem = new HashMap<String, String>();
-        cityItem.put("cityName", "Corbeil-Essonne");
-        cityItem.put("cityPostalCode", "91200");
-        cityList.add(cityItem);
- 
+        cityList.add(cityItem); 
+      
         cityItem = new HashMap<String, String>();
         cityItem.put("cityName", "Evry");
         cityItem.put("cityPostalCode", "91000");
@@ -70,13 +60,8 @@ public class SearchOnglet extends Activity {
         cityItem = new HashMap<String, String>();
         cityItem.put("cityName", "Ballancourt");
         cityItem.put("cityPostalCode", "91610");
-        cityList.add(cityItem);
- 
-        cityItem = new HashMap<String, String>();
-        cityItem.put("cityName", "Corbeil-Essonne");
-        cityItem.put("cityPostalCode", "91200");
-        cityList.add(cityItem);
- 
+        cityList.add(cityItem); 
+
         cityItem = new HashMap<String, String>();
         cityItem.put("cityName", "Evry");
         cityItem.put("cityPostalCode", "91000");

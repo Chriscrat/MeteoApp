@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">Meteo App v2</string>
     <string name="action_settings">Settings</string>
-    <string name="search_label">Recherche</string>
     <string name="fav_label">Favoris</string>
     <string name="search_input_title">Tapez une ville</string>
     <string name="prevision_label">Previsions</string>
@@ -11,4 +10,5 @@
     <string name="current_date_label">Current date</string>
     <string name="current_hour_label">Current hour</string>
     <string name="current_weather_label">Current weather</string>
+    <string name="previsionWeekLabel">Details previsions</string>
 </resources>

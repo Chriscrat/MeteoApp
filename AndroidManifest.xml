@@ -25,6 +25,7 @@
         <activity android:name=".Meteo"></activity>
         <activity android:name=".TodayOnglet"></activity>
         <activity android:name=".WeekOnglet"></activity>
+        <activity android:name=".WeekPrevision"></activity>
         
     </application>
 
