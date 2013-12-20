@@ -30,40 +30,80 @@ public class SearchOnglet extends Activity {
         cityItem = new HashMap<String, String>();
         cityItem.put("cityName", "Ballancourt");
         cityItem.put("cityPostalCode", "91610");
-        cityList.add(cityItem); 
+        cityList.add(cityItem);
+        
+        cityItem = new HashMap<String, String>();
+        cityItem.put("cityName", "Bretigny");
+        cityItem.put("cityPostalCode", "91103");
+        cityList.add(cityItem);
+        
+        cityItem = new HashMap<String, String>();
+        cityItem.put("cityName", "Creteil");
+        cityItem.put("cityPostalCode", "94010");
+        cityList.add(cityItem);
+        
+        cityItem = new HashMap<String, String>();
+        cityItem.put("cityName", "Cergy-Pontoise");
+        cityItem.put("cityPostalCode", "95027");
+        cityList.add(cityItem);
            
+        cityItem = new HashMap<String, String>();
+        cityItem.put("cityName", "Draveil");
+        cityItem.put("cityPostalCode", "91201");
+        cityList.add(cityItem);
+        
         cityItem = new HashMap<String, String>();
         cityItem.put("cityName", "Evry");
         cityItem.put("cityPostalCode", "91000");
         cityList.add(cityItem);
         
         cityItem = new HashMap<String, String>();
-        cityItem.put("cityName", "Athis-Mons");
-        cityItem.put("cityPostalCode", "91200");
-        cityList.add(cityItem);
- 
-        cityItem = new HashMap<String, String>();
-        cityItem.put("cityName", "Ballancourt");
-        cityItem.put("cityPostalCode", "91610");
-        cityList.add(cityItem); 
-      
-        cityItem = new HashMap<String, String>();
-        cityItem.put("cityName", "Evry");
+        cityItem.put("cityName", "Fontainebleau");
         cityItem.put("cityPostalCode", "91000");
         cityList.add(cityItem);
-
+       
         cityItem = new HashMap<String, String>();
-        cityItem.put("cityName", "Athis-Mons");
-        cityItem.put("cityPostalCode", "91200");
+        cityItem.put("cityName", "Grigny");
+        cityItem.put("cityPostalCode", "91350");
         cityList.add(cityItem);
- 
+        
         cityItem = new HashMap<String, String>();
-        cityItem.put("cityName", "Ballancourt");
-        cityItem.put("cityPostalCode", "91610");
-        cityList.add(cityItem); 
-
+        cityItem.put("cityName", "Ivry");
+        cityItem.put("cityPostalCode", "91000");
+        cityList.add(cityItem);
+        
         cityItem = new HashMap<String, String>();
-        cityItem.put("cityName", "Evry");
+        cityItem.put("cityName", "Lardy");
+        cityItem.put("cityPostalCode", "91000");
+        cityList.add(cityItem);
+        
+        cityItem = new HashMap<String, String>();
+        cityItem.put("cityName", "Massy");
+        cityItem.put("cityPostalCode", "91000");
+        cityList.add(cityItem);
+        
+        cityItem = new HashMap<String, String>();
+        cityItem.put("cityName", "Montparnasse");
+        cityItem.put("cityPostalCode", "91000");
+        cityList.add(cityItem);
+        
+        cityItem = new HashMap<String, String>();
+        cityItem.put("cityName", "Noisiel");
+        cityItem.put("cityPostalCode", "77186");
+        cityList.add(cityItem);
+        
+        cityItem = new HashMap<String, String>();
+        cityItem.put("cityName", "Nanterre");
+        cityItem.put("cityPostalCode", "91000");
+        cityList.add(cityItem);
+        
+        cityItem = new HashMap<String, String>();
+        cityItem.put("cityName", "Neuilly Plaisance");
+        cityItem.put("cityPostalCode", "91000");
+        cityList.add(cityItem);
+        
+        cityItem = new HashMap<String, String>();
+        cityItem.put("cityName", "Draveil");
         cityItem.put("cityPostalCode", "91000");
         cityList.add(cityItem);
 
