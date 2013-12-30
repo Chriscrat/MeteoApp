@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Meteo App v2</string>
+    <string name="app_name">Meteo App</string>
     <string name="action_settings">Settings</string>
     <string name="fav_label">Favoris</string>
     <string name="search_input_title">Tapez une ville</string>

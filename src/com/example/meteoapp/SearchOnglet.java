@@ -113,14 +113,18 @@ public class SearchOnglet extends Activity {
         ListViewClass.getListViewSize(cityListView);
         
         final String CITY_SELECTED = "a_city";
+        final String CP_SELECTED = "a_cp";
         cityListView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
         	@SuppressWarnings("unchecked")
          	public void onItemClick(AdapterView<?> a, View v, int position, long id) {
         		HashMap<String, String> map = (HashMap<String, String>) cityListView.getItemAtPosition(position);
         		map.get("cityName");
+        		
         		Intent intent = new Intent(SearchOnglet.this, Meteo.class);
-        		intent.putExtra(CITY_SELECTED, map.get("cityName"));        		
+        		intent.putExtra(CITY_SELECTED, map.get("cityName"));
+        		intent.putExtra(CP_SELECTED, map.get("cityPostalCode"));
+        		//intent.putExtra("favObjectDB", getIntent().getParcelableExtra("favObjectDB"));
         		startActivity(intent);
         	}
          });

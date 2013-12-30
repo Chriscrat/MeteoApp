@@ -17,14 +17,21 @@ public class HomePage extends TabActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_homepage);
+		
+		
+		//Création d'une instance de ma classe FavorisDB
+        //final FavorisDB favDB = new FavorisDB(this);
+		
 		Resources res = getResources();
 		final TabHost tabHost = getTabHost();
 		TabHost.TabSpec spec;
 		Intent intent = new Intent().setClass(this, SearchOnglet.class);
+		//intent.putExtra("favObjectDB", favDB);
 		spec = tabHost.newTabSpec("Widget").setIndicator("Recherche", res.getDrawable(android.R.drawable.ic_search_category_default)).setContent(intent);
 		tabHost.addTab(spec);
 		
 		intent = new Intent().setClass(this, FavOnglet.class);
+		//intent.putExtra("favObjectDB", favDB);
 		spec = tabHost.newTabSpec("Form").setIndicator("Favoris", res.getDrawable(android.R.drawable.star_big_on)).setContent(intent);
 		tabHost.addTab(spec);		
 		tabHost.setCurrentTab(0);
