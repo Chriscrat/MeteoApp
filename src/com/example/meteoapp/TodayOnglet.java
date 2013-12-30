@@ -17,7 +17,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Html;
@@ -29,26 +33,25 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class TodayOnglet extends Activity {
     /** Called when the activity is first created. */
 final String CITY_SELECTED="a_city";
 final String CP_SELECTED = "a_cp";
+Intent intent=null;
+SQLiteDatabase db;
+
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.today_onglet);
-        final Intent intent = getIntent();
+        intent = getIntent();
 		TextView cityLabel = (TextView)findViewById(R.id.selectedCity);
-		if (intent != null) {
+		if (intent != null) 
+		{
 			cityLabel.setText(intent.getStringExtra(CITY_SELECTED));
 		}
-		
-		
- 
-        //Création d'un favoris
-        final Favoris fav = new Favoris(0, intent.getStringExtra(CITY_SELECTED), intent.getStringExtra(CP_SELECTED));
-		//Log.v("Favoris", fav.getCity());
 		SimpleDateFormat formater = null;
 		Date aujourdhui = new Date();
 		formater = new SimpleDateFormat("EEEE d MMM yyyy", Locale.FRANCE);
@@ -65,6 +68,7 @@ final String CP_SELECTED = "a_cp";
 		JSONArray arrayWeather = null;
 		JSONObject objectWeather=null;
 		String weatherOfDay=null, iconWeatherOfDay = null, tempOfDay=null;
+		initDB();
 		try {
 			
 	        //Log.v("Id ville", id);
@@ -207,35 +211,70 @@ final String CP_SELECTED = "a_cp";
 				}
 			});
 	        
-	        final Button favButton = (Button)findViewById(R.id.favButton);
-	        //final FavorisDB favDB =  getIntent().getParcelableExtra("favObjectDB");
-	        final FavorisDB favDB = new FavorisDB(this);
-	        favDB.open();
-	        Favoris favInDB = favDB.getFavWithCityName(intent.getStringExtra(CITY_SELECTED));
-	        favDB.close();
-	        if(favInDB != null)
-	        {
-	        	favButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.fav_btn_on, 0, 0, 0);
-	        }
-
-	        favButton.setOnClickListener(new OnClickListener() {
-			
-				@Override
-				public void onClick(View v) {
-		
-			 
-			        //On ouvre la base de données pour écrire dedans
-					favDB.open();
-			        //On insère le livre que l'on vient de créer
-			        //Log.v("Favoris", fav.getCity());
-			        favDB.insertFav(fav); 
-			        
-			        Favoris favInDB = favDB.getFavWithCityName(intent.getStringExtra(CITY_SELECTED));
-			        Log.v("Test DB",favInDB.toString());
-			        
-			        favDB.close();
-
-			        favButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.fav_btn_on, 0, 0, 0);				}
-			});
+	        Button favButton = (Button)findViewById(R.id.favButton);
+	        displayData(null);
     }
+    
+	public void add(View v) 
+	{
+		insertDB(intent.getStringExtra(CITY_SELECTED));
+		Button favButton = (Button)findViewById(R.id.favButton);
+		favButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.fav_btn_on, 0, 0, 0);				
+	}
+	
+	private void initDB() {
+		DBClass dbHelper = new DBClass(getApplicationContext(), DBClass.DB_NAME, null, DBClass.DB_VERSION);
+		
+		try {
+			db = dbHelper.getWritableDatabase(); // Database en lecture/Ã©criture
+		}
+		catch (SQLiteException e) {
+			db = openOrCreateDatabase(DBClass.DB_NAME, MODE_PRIVATE, null);
+		}
+	}
+	
+	private void insertDB(String value) 
+	{
+		if (db != null) 
+		{
+			Log.v("Ajout DB", value);
+			ContentValues values = new ContentValues();
+			values.put(DBClass.CITY_COLUMN, value);	
+			db.insert(DBClass.DB_TABLE, null, values);
+			Toast.makeText(this, "Ajouter aux favoris: "+value, Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	@Override
+	protected void onStart() 
+	{
+		super.onDestroy();
+
+	}
+
+	@Override
+	protected void onDestroy() 
+	{
+		super.onDestroy();
+
+		db.close();
+	}
+	
+	public void displayData(View v) 
+	{		
+		if (db != null) {
+			StringBuilder data = new StringBuilder();
+			
+			Cursor cursor = db.query(DBClass.DB_TABLE, null, null, null, null, null, null);
+			Log.v("Nombre de lignes", Integer.toString(cursor.getCount()));
+			while (cursor.moveToNext()) 
+			{
+				String cityName = cursor.getString(cursor.getColumnIndex(DBClass.CITY_COLUMN));
+//				Log.v(TAG, "student name: " + studentName);
+				data.append(cityName);
+			}
+			cursor.close();
+			Log.v("Resultat : ", data.toString());
+		}
+	}
 }

@@ -13,10 +13,14 @@ import android.widget.TabHost.OnTabChangeListener;
 @SuppressWarnings("deprecation")
 public class HomePage extends TabActivity {
 
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_homepage);
+		
+		
+		
 		
 		
 		//Création d'une instance de ma classe FavorisDB
@@ -53,16 +57,4 @@ public class HomePage extends TabActivity {
 		}
 		}));
 	}
-
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.action_bar, menu);
-	
-	
-	    return true;
-	}
-	
-
 }

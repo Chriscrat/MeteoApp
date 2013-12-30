@@ -59,7 +59,7 @@ public final class R {
     }
     public static final class id {
         public static final int ImageView01=0x7f080019;
-        public static final int action_settings=0x7f080021;
+        public static final int action_settings=0x7f08001d;
         public static final int backButton=0x7f080000;
         public static final int bottomBar=0x7f080001;
         public static final int cityListView=0x7f080010;
@@ -75,10 +75,6 @@ public final class R {
         public static final int hourPrevision=0x7f080009;
         public static final int imageView1=0x7f080011;
         public static final int img=0x7f080006;
-        public static final int menu_add=0x7f08001e;
-        public static final int menu_crop=0x7f080020;
-        public static final int menu_save=0x7f08001f;
-        public static final int menu_search=0x7f08001d;
         public static final int meteoView=0x7f080016;
         public static final int previsionLabel=0x7f080002;
         public static final int previsionListView=0x7f080003;
@@ -107,8 +103,7 @@ public final class R {
         public static final int week_prevision=0x7f03000a;
     }
     public static final class menu {
-        public static final int action_bar=0x7f070000;
-        public static final int search_city=0x7f070001;
+        public static final int search_city=0x7f070000;
     }
     public static final class string {
         public static final int action_settings=0x7f050001;
