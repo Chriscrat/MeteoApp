@@ -2,8 +2,6 @@ package com.example.meteoapp;
 
 import android.os.Bundle;
 import android.app.TabActivity;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;

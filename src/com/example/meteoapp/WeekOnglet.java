@@ -56,12 +56,12 @@ public class WeekOnglet extends Activity {
 			previsionArray = json.getJSONArray("list");
 		    
 		    // looping through All Contacts
-		    for(int i = 1; i <= 6; i++){
+		    for(int i = 1; i < 6; i++){
 		        JSONObject c = previsionArray.getJSONObject(i);
 			        
 		        JSONObject detailWeather = c.getJSONObject("temp");
 		        //iconPrevision =  "http://openweathermap.org/img/w/"+detailWeather.getJSONObject(0).getString("icon")+".png";
-		        temperaturePrevision =  "M : "+detailWeather.getString("morn")+" C° AM : "+detailWeather.getString("day")+" C° S : "+detailWeather.getString("night")+" C°";
+		        temperaturePrevision =  "Matin : "+ Math.round(detailWeather.getLong("morn"))+" C° Après-Midi : "+Math.round(detailWeather.getLong("day"))+" C° Soir : "+Math.round(detailWeather.getLong("night"))+" C°";
 	        
 				nextDayItem = new  HashMap<String, String>();
 				cal.add(Calendar.DATE, 1);

@@ -97,7 +97,7 @@ public class WeekPrevision extends Activity {
 		        	String hourOfDay = formatHeure.format(d.getTime());*/
 		        	Log.v("Heure", hour+"h");
 		        	JSONObject main = c.getJSONObject("main");
-		        	tempOfDay = main.getString("temp");
+		        	tempOfDay = Integer.toString((int)Math.round(main.getLong("temp")));
 		        	Log.v("temperature",tempOfDay);
 		        	
 		        	JSONArray arrayWeather = c.getJSONArray("weather");

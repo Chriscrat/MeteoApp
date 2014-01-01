@@ -13,14 +13,17 @@ import android.widget.TabHost.OnTabChangeListener;
 @SuppressWarnings("deprecation")
 public class Meteo extends TabActivity {
 	final String CITY_SELECTED = "a_city";
+	final String CP_SELECTED = "a_cp";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_meteo);
-		String city="";
+		String city="", cp="";
 		Intent intent = getIntent();
+		Bundle extras = getIntent().getExtras();
 		if (intent != null) {
-			city = intent.getStringExtra(CITY_SELECTED);
+			city = extras.getString(CITY_SELECTED);
+			cp = extras.getString(CP_SELECTED);
 			Log.v("Activity meteo : ville : ", city);
 		}	
 
@@ -28,12 +31,15 @@ public class Meteo extends TabActivity {
 		final TabHost tabHost = getTabHost();
 		TabHost.TabSpec spec;
 		Intent intent2 = new Intent().setClass(this, TodayOnglet.class);
-		intent2.putExtra(CITY_SELECTED, city);
+		extras.putString(CITY_SELECTED, city);
+		extras.putString(CP_SELECTED, cp);
+		intent2.putExtras(extras);
+
 		spec = tabHost.newTabSpec("Widget").setIndicator("Aujourd'hui", res.getDrawable(android.R.drawable.ic_menu_day)).setContent(intent2);
 		tabHost.addTab(spec);
 		
 		intent2 = new Intent().setClass(this, WeekOnglet.class);
-		intent2.putExtra(CITY_SELECTED, city);
+		intent2.putExtras(extras);
 
 		spec = tabHost.newTabSpec("Form").setIndicator("Semaine", res.getDrawable(android.R.drawable.ic_menu_week)).setContent(intent2);
 		tabHost.addTab(spec);		

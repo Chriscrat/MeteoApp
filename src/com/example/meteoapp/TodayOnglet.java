@@ -18,7 +18,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -39,18 +38,19 @@ public class TodayOnglet extends Activity {
     /** Called when the activity is first created. */
 final String CITY_SELECTED="a_city";
 final String CP_SELECTED = "a_cp";
-Intent intent=null;
+Bundle extras=null;
 SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.today_onglet);
-        intent = getIntent();
+        extras = getIntent().getExtras();
 		TextView cityLabel = (TextView)findViewById(R.id.selectedCity);
-		if (intent != null) 
+		if (extras != null) 
 		{
-			cityLabel.setText(intent.getStringExtra(CITY_SELECTED));
+			cityLabel.setText(extras.getString(CITY_SELECTED));
+			Log.v("Ville et CP", extras.getString(CITY_SELECTED)+" "+extras.getString(CP_SELECTED));
 		}
 		SimpleDateFormat formater = null;
 		Date aujourdhui = new Date();
@@ -58,7 +58,7 @@ SQLiteDatabase db;
 		String dayOfWeek = formater.format(aujourdhui);
 		Log.v("date", dayOfWeek);
 	
-		String cityUrl = "http://api.openweathermap.org/data/2.5/weather?q="+intent.getStringExtra(CITY_SELECTED)+"&mode=json&units=metric&lang=fr";
+		String cityUrl = "http://api.openweathermap.org/data/2.5/weather?q="+extras.getString(CITY_SELECTED)+"&mode=json&units=metric&lang=fr";
 		Log.v("Activity today : url", cityUrl);
 
 	 	JSONParser jParser = new JSONParser();
@@ -67,8 +67,12 @@ SQLiteDatabase db;
 		JSONObject json = jParser.getJSONFromUrl(cityUrl);
 		JSONArray arrayWeather = null;
 		JSONObject objectWeather=null;
-		String weatherOfDay=null, iconWeatherOfDay = null, tempOfDay=null;
+		String weatherOfDay=null, iconWeatherOfDay = null;
+		long tempOfDay;
+		int roundTempOfDay=0;
+		
 		initDB();
+		
 		try {
 			
 	        //Log.v("Id ville", id);
@@ -77,11 +81,11 @@ SQLiteDatabase db;
 	        weatherOfDay = Html.fromHtml(weather).toString();
         	//Log.v("Description", weatherOfDay);
         	iconWeatherOfDay = arrayWeather.getJSONObject(0).getString("icon");
-        	//Log.v("Icon", iconWeatherOfDay);
+        	Log.v("Icon", iconWeatherOfDay);
         	
         	objectWeather = json.getJSONObject("main");
-        	tempOfDay = objectWeather.getString("temp");
-        	
+        	tempOfDay = objectWeather.getLong("temp");
+        	roundTempOfDay = (int)Math.round(tempOfDay);
         	//Log.v("Temperature", tempOfDay);
 	        	
 		} catch (JSONException e) {
@@ -105,7 +109,7 @@ SQLiteDatabase db;
 		currentDate.setText(dayOfWeek);
 		currentHour.setText(hourOfDay);
 		currentWeather.setText(weatherOfDay);
-		currentTemp.setText(tempOfDay+" C°");
+		currentTemp.setText(Integer.toString(roundTempOfDay)+" C°");
 		
 		ImageView meteoView = (ImageView)findViewById(R.id.meteoView);
 		String iconUrl = "http://openweathermap.org/img/w/"+iconWeatherOfDay+".png";
@@ -129,7 +133,7 @@ SQLiteDatabase db;
 		meteoView.setImageBitmap(BitmapFactory.decodeStream(is));
 		
 		
-		String currentPrevisionCity = "http://api.openweathermap.org/data/2.5/forecast/city?q="+intent.getStringExtra(CITY_SELECTED)+"&lang=fr&units=metric";
+		String currentPrevisionCity = "http://api.openweathermap.org/data/2.5/forecast/city?q="+extras.getString(CITY_SELECTED)+"&lang=fr&units=metric";
 		Log.v("Prevision url", currentPrevisionCity);
 		ArrayList<HashMap<String, Object>> previsionList = new  ArrayList<HashMap<String, Object>>();
         HashMap<String, Object> previsionItem;
@@ -157,7 +161,8 @@ SQLiteDatabase db;
     };
 		json = jParser.getJSONFromUrl(currentPrevisionCity);
 		JSONArray previsionArray = null;
-		String hourPrevision=null, temperaturePrevision=null, iconPrevision=null;
+		String hourPrevision=null, iconPrevision=null;
+		double temperaturePrevision;
 		WeatherIcon wi = new WeatherIcon();
 			try {
 			    // Getting Array of Contacts
@@ -178,13 +183,15 @@ SQLiteDatabase db;
 			        //Log.v("IconPrevision", iconPrevision);
 			        
 			        JSONObject item = c.getJSONObject("main");
-			        temperaturePrevision = item.getString("temp");
-			        //Log.v("TemperaturePrevision", temperaturePrevision);
+			        temperaturePrevision = item.getDouble("temp");
 			        
-			        //Bitmap bm = BitmapFactory.decodeStream((InputStream) new URL(iconPrevision).getContent());
+			        //Log.v("TemperaturePrevision", String.valueOf(temperaturePrevision));
+			        int roundTemp = (int)Math.round(temperaturePrevision);
+			        
+			        //Log.v("Arrondis", Integer.toString(roundTemp));
 			        int pos = (Integer) wi.getFlagByIconCode(iconPrevision);
 			        previsionItem = new HashMap<String, Object>();
-			        previsionItem.put("temperature", temperaturePrevision+"C°");
+			        previsionItem.put("temperature", Integer.toString(roundTemp)+"C°");
 			        previsionItem.put("weather", flags[pos]);
 			        previsionItem.put("hour", hourPrevision+"h");
 			        previsionList.add(previsionItem);
@@ -212,17 +219,24 @@ SQLiteDatabase db;
 			});
 	        
 	        Button favButton = (Button)findViewById(R.id.favButton);
-	        displayData(null);
+	        boolean isFavoris = checkFav(extras.getString(CITY_SELECTED));
+	        if(isFavoris)
+	        {	    	
+	        	favButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.fav_btn_on, 0, 0, 0);
+	        	Log.v("City", "est favoris");
+	        }
+
     }
     
 	public void add(View v) 
 	{
-		insertDB(intent.getStringExtra(CITY_SELECTED));
+		insertDB(extras.getString(CITY_SELECTED), extras.getString(CP_SELECTED));
 		Button favButton = (Button)findViewById(R.id.favButton);
 		favButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.fav_btn_on, 0, 0, 0);				
 	}
 	
-	private void initDB() {
+	private void initDB() 
+	{
 		DBClass dbHelper = new DBClass(getApplicationContext(), DBClass.DB_NAME, null, DBClass.DB_VERSION);
 		
 		try {
@@ -233,15 +247,16 @@ SQLiteDatabase db;
 		}
 	}
 	
-	private void insertDB(String value) 
+	private void insertDB(String city, String cp) 
 	{
 		if (db != null) 
 		{
-			Log.v("Ajout DB", value);
 			ContentValues values = new ContentValues();
-			values.put(DBClass.CITY_COLUMN, value);	
+			values.put(DBClass.CITY_COLUMN, city);
+			values.put(DBClass.CP_COLUMN, cp);
+
 			db.insert(DBClass.DB_TABLE, null, values);
-			Toast.makeText(this, "Ajouter aux favoris: "+value, Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Ajouter aux favoris: "+city, Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -260,21 +275,14 @@ SQLiteDatabase db;
 		db.close();
 	}
 	
-	public void displayData(View v) 
+	public boolean checkFav(String currentCity) 
 	{		
-		if (db != null) {
-			StringBuilder data = new StringBuilder();
-			
-			Cursor cursor = db.query(DBClass.DB_TABLE, null, null, null, null, null, null);
-			Log.v("Nombre de lignes", Integer.toString(cursor.getCount()));
-			while (cursor.moveToNext()) 
-			{
-				String cityName = cursor.getString(cursor.getColumnIndex(DBClass.CITY_COLUMN));
-//				Log.v(TAG, "student name: " + studentName);
-				data.append(cityName);
-			}
-			cursor.close();
-			Log.v("Resultat : ", data.toString());
+		boolean isFav=false;
+		if (db != null) 
+		{	
+			Cursor c = db.rawQuery("SELECT cityName FROM favoris WHERE cityName = '"+currentCity+"'", null);			
+			isFav=c.moveToFirst();			
 		}
+		return isFav;
 	}
 }
