@@ -2,11 +2,21 @@ package com.example.meteoapp;
 
 import java.util.HashMap;
 
-public class WeatherIcon {
-	
+/*
+ * Classe permettant de récupérer un entier correspondant au nom de l'image récupérer depuis l'API et à charger depuis les images en locale
+ * Elle permet l'affichage d'images en adéquation aux prévisions météo 
+ */
+public class WeatherIcon 
+{	
 	HashMap<String, Object> codeList;
-	WeatherIcon()
+	
+	//Constructeur publique
+	public WeatherIcon()
 	{
+		/*
+		 * Création d'un HashMap contenant l'ensemble des noms des images 
+		 * Elles sont disponibles dans les ressources de l'application (res > Drawable)
+		 */
 		codeList = new HashMap<String,Object>();
 		codeList.put("01d", 1);
 		codeList.put("01n", 2);
@@ -28,6 +38,10 @@ public class WeatherIcon {
 		codeList.put("50n", 18);
 	}
 	
+	/*
+	 * Méthode publique de type Object
+	 * Elle permet de retournée l'entier correspondant au nom de l'image à chargée
+	 */
 	public Object getFlagByIconCode(String code)
 	{
 		return codeList.get(code);

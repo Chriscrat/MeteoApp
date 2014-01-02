@@ -10,6 +10,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:background="#FFFFFF"
+        android:onClick="back"
         android:drawableTop="@drawable/back_btn" />
 
     <ListView

@@ -22,7 +22,7 @@
         </activity>
         <activity android:name=".FavOnglet"></activity>
         <activity android:name=".SearchOnglet"></activity>
-        <activity android:name=".Meteo"></activity>
+        <activity android:name=".MeteoPage"></activity>
         <activity android:name=".TodayOnglet"></activity>
         <activity android:name=".WeekOnglet"></activity>
         <activity android:name=".WeekPrevision"></activity>
