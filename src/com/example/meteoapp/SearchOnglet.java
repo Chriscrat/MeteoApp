@@ -2,27 +2,34 @@ package com.example.meteoapp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.AdapterView.OnItemClickListener;
 
+@SuppressLint("DefaultLocale")
 public class SearchOnglet extends Activity {
     /** Called when the activity is first created. */
 	private ListView cityListView;
+	private ArrayList<HashMap<String, String>> cityList;
     final String CITY_SELECTED = "a_city";
     final String CP_SELECTED = "a_cp";
-
-    @Override
+    
+    @SuppressLint("DefaultLocale")
+	@Override
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_onglet);
-        ArrayList<HashMap<String, String>> cityList = new ArrayList<HashMap<String, String>>();
+        cityList = new ArrayList<HashMap<String, String>>();
         HashMap<String, String> cityItem;
         cityItem = new HashMap<String, String>();
         cityItem.put("cityName", "Athis-Mons");
@@ -125,9 +132,9 @@ public class SearchOnglet extends Activity {
         cityList.add(cityItem);
         
         cityListView = (ListView) findViewById(R.id.cityListView); 
-        SimpleAdapter adaptater = new SimpleAdapter (this.getBaseContext(), cityList, R.layout.city_item, new String[] {"cityName", "cityPostalCode"}, new int[] {R.id.cityName, R.id.cityPostalCode});
-        cityListView.setAdapter(adaptater);
-        ListViewClass.getListViewSize(cityListView);
+        final SimpleAdapter adapter = new SimpleAdapter (this.getBaseContext(), cityList, R.layout.city_item, new String[] {"cityName", "cityPostalCode"}, new int[] {R.id.cityName, R.id.cityPostalCode});
+        cityListView.setAdapter(adapter);
+        //ListViewClass.getListViewSize(cityListView);
         
 
         cityListView.setOnItemClickListener(new OnItemClickListener() {
@@ -148,5 +155,35 @@ public class SearchOnglet extends Activity {
         		startActivity(intent);
         	}
          });
+        
+        EditText searchText = (EditText)findViewById(R.id.searchInput);
+        
+        searchText.addTextChangedListener(new TextWatcher() 
+        {
+
+			@SuppressLint("DefaultLocale")
+			@Override
+			public void afterTextChanged(Editable arg0) 
+			{
+				EditText searchText = (EditText)findViewById(R.id.searchInput);
+				String charSequence = searchText.getText().toString();
+				adapter.notifyDataSetChanged();
+				if(charSequence!=null)				
+					adapter.getFilter().filter(charSequence);
+									
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,	int after) 
+			{
+				
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) 
+			{
+				
+			}
+        });
         }
 }

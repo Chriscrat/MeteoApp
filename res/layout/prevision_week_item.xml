@@ -18,14 +18,14 @@
 	        android:layout_width="330dp"
 	        android:layout_height="match_parent"
 	        android:textSize="16sp"
-	        android:text="Jour"
+	        android:text="@string/day"
 	        android:textStyle="bold" />
  
 	    <TextView android:id="@+id/temperatureWeekPrevision"
 	         android:layout_width="fill_parent"
 	         android:layout_height="fill_parent"
-	         android:textSize="10sp"	         
-	         android:text="Temperature"/>
+	         android:textSize="12sp"	         
+	         android:text="@string/temperature"/>
     </LinearLayout>
     
 		<ImageView

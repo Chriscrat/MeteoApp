@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Meteo App</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Paramères</string>
     <string name="fav_label">Favoris</string>
-    <string name="search_input_title">Tapez une ville</string>
-    <string name="prevision_label">Previsions</string>
-    <string name="selected_city">Selected city</string>
+    <string name="search_input_title">Taper un filtre</string>
+    <string name="prevision_label">Prévisions</string>
+    <string name="selected_city">Ville selectionnée</string>
     <string name="temperature_label">0C°</string>
-    <string name="current_date_label">Current date</string>
-    <string name="current_hour_label">Current hour</string>
-    <string name="current_weather_label">Current weather</string>
-    <string name="previsionWeekLabel">Details previsions</string>
+    <string name="current_date_label">Date courante</string>
+    <string name="current_hour_label">Heure courante</string>
+    <string name="current_weather_label">Météo courante</string>
+    <string name="previsionWeekLabel">Details prévisions</string>
+    <string name="hour">Heure</string>
+    <string name="temperature">Temperature</string>
+    <string name="day">Jour</string>
+    <string name="search">Rechercher</string>
 </resources>

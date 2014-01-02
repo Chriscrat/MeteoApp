@@ -11,38 +11,49 @@
         android:layout_alignParentTop="true"
         android:background="#FFFFFF"
         android:drawableBottom="@drawable/search_btn" />
-	
+    
+        <TextView
+        android:id="@+id/searchLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/searchInput"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"        
+        android:text="@string/search"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+        
 	    <EditText
 	        android:id="@+id/searchInput"
 	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
+	        android:layout_height="match_parent"
 	        android:layout_above="@+id/cityListView"
-	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentRight="true"
 	        android:layout_alignParentTop="true"
-	        android:layout_toLeftOf="@+id/searchButton"
 	        android:background="#FFFFFF"
 	        android:ems="10"
+	        android:layout_marginLeft="10sp"
 	        android:hint="@string/search_input_title" >
 	
 	        <requestFocus />
 	    </EditText>
-
+	    
+    <ImageView
+        android:id="@+id/bottomBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/searchButton"
+        android:src="@drawable/bottom_bar" />
+    
     <ListView
         android:id="@+id/cityListView"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="60sp"
         android:background="#f5f5f5"
-        android:layout_below="@+id/searchButton" >
+        android:layout_below="@+id/bottomBar" >
 
     </ListView>
 
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/cityListView"
-        android:layout_alignParentLeft="true"
-        android:src="@drawable/bottom_bar" />
- 
+
+
 </RelativeLayout>

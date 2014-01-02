@@ -18,13 +18,13 @@
 	        android:layout_width="330dp"
 	        android:layout_height="match_parent"
 	        android:textSize="16sp"
-	        android:text="Heure"
+	        android:text="@string/hour"
 	        android:textStyle="bold" />
  
 	    <TextView android:id="@+id/temperaturePrevision"
 	         android:layout_width="fill_parent"
 	         android:layout_height="fill_parent"
-	         android:text="Temperature"/>
+	         android:text="@string/temperature"/>
     </LinearLayout>
     
 		<ImageView
