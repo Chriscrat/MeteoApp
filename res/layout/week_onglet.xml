@@ -11,26 +11,6 @@
         android:layout_alignParentTop="true"
         android:drawableTop="@drawable/back_btn"
         android:background="#FFFFFF" />
-      
-    <ImageView
-        android:id="@+id/bottomBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/previsionLabel"
-        android:src="@drawable/bottom_bar" />
-
-
-    <TextView
-        android:id="@+id/previsionLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="14dp"
-        android:text="@string/prevision_label"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <ListView
             android:id="@+id/previsionListView"
@@ -41,5 +21,23 @@
             android:background="#f5f5f5"          
             android:layout_below="@+id/backButton" >
         </ListView>
+
+        <TextView
+            android:id="@+id/previsionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:text="@string/prevision_label"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <ImageView
+            android:id="@+id/bottomBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/previsionLabel"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/bottom_bar" />
  
 </RelativeLayout>

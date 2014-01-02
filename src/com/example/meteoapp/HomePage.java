@@ -13,17 +13,12 @@ public class HomePage extends TabActivity {
 
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) 
+	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_homepage);
-		
-		
-		
-		
-		
-		//Création d'une instance de ma classe FavorisDB
-        //final FavorisDB favDB = new FavorisDB(this);
-		
+		//savedInstanceState.clear();
+				
 		Resources res = getResources();
 		final TabHost tabHost = getTabHost();
 		TabHost.TabSpec spec;
@@ -37,7 +32,7 @@ public class HomePage extends TabActivity {
 		spec = tabHost.newTabSpec("Form").setIndicator("Favoris", res.getDrawable(android.R.drawable.star_big_on)).setContent(intent);
 		tabHost.addTab(spec);		
 		tabHost.setCurrentTab(0);
-		
+	
 	    for(int i=0;i<tabHost.getTabWidget().getChildCount();i++)
 		{
 		   tabHost.getTabWidget().getChildAt(i).setBackgroundColor(Color.parseColor("#dedede")); //unselected

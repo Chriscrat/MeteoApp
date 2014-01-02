@@ -10,6 +10,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:drawableTop="@drawable/back_btn"
+        android:onClick="back"
         android:background="#FFFFFF" />
 
     <ListView
@@ -22,25 +23,15 @@
         android:layout_marginBottom="60sp" >
     </ListView>
 
-    <ImageView
-        android:id="@+id/bottomBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/selectedCity"
-        android:src="@drawable/bottom_bar" />
-
     <Button
         android:id="@+id/favButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/selectedCity"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:background="#FFFFFF"
         android:drawableTop="@drawable/fav_btn_off"
-        android:onClick="add" />
+        android:onClick="addFavoris" />
 
     <TextView
         android:id="@+id/dateLabel"
@@ -98,16 +89,6 @@
         android:text="@string/prevision_label"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <TextView
-        android:id="@+id/selectedCity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="14dp"
-        android:text="@string/selected_city"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
     <ImageView
         android:id="@+id/meteoView"
         android:layout_width="wrap_content"
@@ -124,6 +105,25 @@
         android:layout_marginLeft="17dp"
         android:layout_toRightOf="@+id/selectedCity"
         android:text="@string/temperature_label"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <ImageView
+        android:id="@+id/bottomBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/backButton"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/bottom_bar" />
+
+    <TextView
+        android:id="@+id/selectedCity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/bottomBar"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="@string/selected_city"
         android:textAppearance="?android:attr/textAppearanceLarge" />
  
 </RelativeLayout>

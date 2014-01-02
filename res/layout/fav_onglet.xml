@@ -11,25 +11,24 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/favorisLabel"
         android:src="@drawable/bottom_bar" />
-
-
-    <TextView
-        android:id="@+id/favorisLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="14dp"
-        android:text="@string/fav_label"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
     
         <ListView
-        android:id="@+id/favListView"
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="60sp"
-        android:layout_below="@+id/favorisLabel" >
+            android:id="@+id/favListView"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/bottomBar"
+            android:background="#f5f5f5"            
+            android:layout_marginBottom="60sp">
+           
+        </ListView>
 
-    </ListView>
+        <TextView
+            android:id="@+id/favorisLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:text="@string/fav_label"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
  
 </RelativeLayout>

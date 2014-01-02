@@ -18,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -26,7 +27,6 @@ import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -45,14 +45,31 @@ SQLiteDatabase db;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.today_onglet);
+        
         extras = getIntent().getExtras();
 		TextView cityLabel = (TextView)findViewById(R.id.selectedCity);
 		if (extras != null) 
 		{
 			cityLabel.setText(extras.getString(CITY_SELECTED));
 			Log.v("Ville et CP", extras.getString(CITY_SELECTED)+" "+extras.getString(CP_SELECTED));
-		}
-		SimpleDateFormat formater = null;
+		}					
+        
+		initDB();
+        Button favButton = (Button)findViewById(R.id.favButton);
+        boolean isFavoris = checkFav(extras.getString(CITY_SELECTED));
+        if(isFavoris)
+        {	    	
+        	favButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.fav_btn_on, 0, 0, 0);
+        	Log.v("City", "est favoris");
+        }
+    }
+    
+    @Override
+    protected void onStart()
+    {
+		super.onDestroy();
+
+    	SimpleDateFormat formater = null;
 		Date aujourdhui = new Date();
 		formater = new SimpleDateFormat("EEEE d MMM yyyy", Locale.FRANCE);
 		String dayOfWeek = formater.format(aujourdhui);
@@ -69,12 +86,9 @@ SQLiteDatabase db;
 		JSONObject objectWeather=null;
 		String weatherOfDay=null, iconWeatherOfDay = null;
 		long tempOfDay;
-		int roundTempOfDay=0;
+		int roundTempOfDay=0;		
 		
-		initDB();
-		
-		try {
-			
+		try {			
 	        //Log.v("Id ville", id);
 	        arrayWeather = json.getJSONArray("weather");		     
 	        String weather = new String(arrayWeather.getJSONObject(0).getString("description").getBytes("ISO-8859-1"), "UTF-8");
@@ -97,8 +111,7 @@ SQLiteDatabase db;
 	
 		Calendar heureFrance = Calendar.getInstance();		 
 	    heureFrance.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
-		String hourOfDay  = heureFrance.get(Calendar.HOUR_OF_DAY)+":"+heureFrance.get(Calendar.MINUTE);
-	
+		String hourOfDay  = heureFrance.get(Calendar.HOUR_OF_DAY)+":"+heureFrance.get(Calendar.MINUTE);	
 
 		TextView currentDate, currentHour, currentWeather, currentTemp;
 		currentDate = (TextView)findViewById(R.id.dateLabel);
@@ -130,8 +143,7 @@ SQLiteDatabase db;
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		meteoView.setImageBitmap(BitmapFactory.decodeStream(is));
-		
+		meteoView.setImageBitmap(BitmapFactory.decodeStream(is));		
 		
 		String currentPrevisionCity = "http://api.openweathermap.org/data/2.5/forecast/city?q="+extras.getString(CITY_SELECTED)+"&lang=fr&units=metric";
 		Log.v("Prevision url", currentPrevisionCity);
@@ -204,35 +216,33 @@ SQLiteDatabase db;
 			
 			ListView listPrevision = (ListView)findViewById(R.id.todayPrevisionListView);
 			SimpleAdapter adaptater = new SimpleAdapter (this.getBaseContext(), previsionList, R.layout.prevision_today_item, new String[] {"hour", "temperature", "weather"}, new int[] {R.id.hourPrevision, R.id.temperaturePrevision, R.id.weatherPrevisionImage});			
-			listPrevision.setAdapter(adaptater);
-			
-			ListViewClass.getListViewSize(listPrevision);
-			
-			Button back_btn = (Button)findViewById(R.id.backButton);
-	        back_btn.setOnClickListener(new OnClickListener() {
-			
-				@Override
-				public void onClick(View v) {
-					// TODO Auto-generated m;ethod stub
-					finish();
-				}
-			});
-	        
-	        Button favButton = (Button)findViewById(R.id.favButton);
-	        boolean isFavoris = checkFav(extras.getString(CITY_SELECTED));
-	        if(isFavoris)
-	        {	    	
-	        	favButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.fav_btn_on, 0, 0, 0);
-	        	Log.v("City", "est favoris");
-	        }
-
+			listPrevision.setAdapter(adaptater);			
+			ListViewClass.getListViewSize(listPrevision);	
+    }
+    public void back(View v)
+    {
+	    // TODO Auto-generated method stub
+	    super.onRestart();
+	    Intent intent = new Intent(TodayOnglet.this, HomePage.class); 
+	    startActivity(intent);
+    	finish();
     }
     
-	public void add(View v) 
+	public void addFavoris(View v) 
 	{
-		insertDB(extras.getString(CITY_SELECTED), extras.getString(CP_SELECTED));
-		Button favButton = (Button)findViewById(R.id.favButton);
-		favButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.fav_btn_on, 0, 0, 0);				
+        boolean isFavoris = checkFav(extras.getString(CITY_SELECTED));
+        Button favButton = (Button)findViewById(R.id.favButton);
+        if(!isFavoris)
+        {
+    		insertDB(extras.getString(CITY_SELECTED), extras.getString(CP_SELECTED));
+    		favButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.fav_btn_on, 0, 0, 0);
+        }
+        else
+        {
+        	deleteDB(extras.getString(CITY_SELECTED));
+        	favButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.fav_btn_off, 0, 0, 0);        	
+        }
+		
 	}
 	
 	private void initDB() 
@@ -261,13 +271,6 @@ SQLiteDatabase db;
 	}
 
 	@Override
-	protected void onStart() 
-	{
-		super.onDestroy();
-
-	}
-
-	@Override
 	protected void onDestroy() 
 	{
 		super.onDestroy();
@@ -275,7 +278,7 @@ SQLiteDatabase db;
 		db.close();
 	}
 	
-	public boolean checkFav(String currentCity) 
+	private boolean checkFav(String currentCity) 
 	{		
 		boolean isFav=false;
 		if (db != null) 
@@ -284,5 +287,15 @@ SQLiteDatabase db;
 			isFav=c.moveToFirst();			
 		}
 		return isFav;
+	}
+	
+	private void deleteDB(String currentCity) 
+	{
+		if (db != null) 
+		{
+			int countRows = db.delete(DBClass.DB_TABLE, "cityName = ?", new String[] {currentCity});
+			Log.v("Nb ligne supprimé : ", Integer.toString(countRows));
+			Toast.makeText(this, "Favoris supprimée : "+currentCity, Toast.LENGTH_SHORT).show();
+		}
 	}
 }
