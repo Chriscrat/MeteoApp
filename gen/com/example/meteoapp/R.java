@@ -103,8 +103,12 @@ public final class R {
         public static final int day=0x7f05000d;
         public static final int fav_label=0x7f050002;
         public static final int hour=0x7f05000b;
+        public static final int new_location=0x7f050012;
         public static final int previsionWeekLabel=0x7f05000a;
         public static final int prevision_label=0x7f050004;
+        public static final int provider_disabled=0x7f050010;
+        public static final int provider_enabled=0x7f05000f;
+        public static final int provider_new_status=0x7f050011;
         public static final int search=0x7f05000e;
         public static final int search_input_title=0x7f050003;
         public static final int selected_city=0x7f050005;

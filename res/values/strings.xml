@@ -15,4 +15,8 @@
     <string name="temperature">Temperature</string>
     <string name="day">Jour</string>
     <string name="search">Rechercher</string>
+    <string name="provider_enabled">Le fournisseur %s est activé</string>
+    <string name="provider_disabled">Le fournisseur %s est désactivé</string>    
+    <string name="provider_new_status">Le fournisseur %1$s est en état : %2$s</string>
+    <string name="new_location">New Location : Latitude = %1$s, Longitude = %2$s, Altitude = %3$s avec une précision de %4$s mètres </string>
 </resources>

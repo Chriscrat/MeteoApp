@@ -5,15 +5,22 @@ import java.util.HashMap;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.TextView;
+import android.widget.Toast;
 
 /*
  * Classe permettant de construire l'Activity SearchOnglet
@@ -22,11 +29,18 @@ import android.widget.AdapterView.OnItemClickListener;
  */
 
 @SuppressLint("DefaultLocale")
-public class SearchOnglet extends Activity 
+public class SearchOnglet extends Activity implements LocationListener //Implémentation de LocationListener pour effectuer de la géolocalisation
 {
-    /** Called when the activity is first created. */
 	private ListView cityListView;
 	private ArrayList<HashMap<String, String>> cityList;
+	
+	private LocationManager lm;
+    private Location loc;
+
+	private double latitude;
+	private double longitude;
+	private double altitude;
+	private float accuracy;
 	
 	//Tags permettant de récuperer des variables transmis au travers d'objets Intent
     final String CITY_SELECTED = "a_city";
@@ -177,7 +191,6 @@ public class SearchOnglet extends Activity
         		startActivity(intent);//Appel de l'Activity MeteoPage
         	}
          });
-        
         EditText searchText = (EditText)findViewById(R.id.searchInput);
         
         //Déclaration d'un listener pour un évènement de type modification du texte
@@ -197,8 +210,7 @@ public class SearchOnglet extends Activity
 				String charSequence = searchText.getText().toString();
 				adapter.notifyDataSetChanged();
 				if(charSequence!=null)				
-					adapter.getFilter().filter(charSequence);
-									
+					adapter.getFilter().filter(charSequence);									
 			}
 
 			@Override
@@ -225,5 +237,95 @@ public class SearchOnglet extends Activity
 				
 			}
         });
-        }
+        
+    	lm = (LocationManager) this.getSystemService(LOCATION_SERVICE); //Permet la création d'un abonnement pour la géolocalisation
+    }
+    
+    @Override
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onResume()
+     * Méthode protégée de type void
+     * Elle est appellée une fois que la page est construire puis lancée et permet de définir des actions dés que l'Activity a le focus
+     */
+    protected void onResume() 
+    {
+    	super.onResume();
+    	if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
+    	{
+    		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this); //Récupération de données GPS dans un intervalle donné
+    		Log.v("GPS", "Démarré");
+    	//	Log.v("Latitude", ":"+loc.getAltitude());
+    	}
+    }
+
+    @Override
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onPause()
+     * Méthode protégée de type void
+     * Elle permet de mettre en pause l'Activity pour laisser la main à une autre Activity
+     */
+    protected void onPause() 
+    {
+    	super.onPause();
+    	lm.removeUpdates(this); //Permet le désabonnement afin de libérer les ressources monopolisées par la géolocalisation
+    }
+
+	@Override
+	/*
+	 * (non-Javadoc)
+	 * @see android.location.LocationListener#onLocationChanged(android.location.Location)
+	 * Elle est appelée quand la localisation de l’utilisateur est mise à jour
+	 */
+	public void onLocationChanged(Location arg0) 
+	{
+		loc = arg0;
+		latitude = loc.getLatitude();
+		longitude = loc.getLongitude();
+		altitude = loc.getAltitude();
+		accuracy = loc.getAccuracy();
+		String msg = String.format(getResources().getString(R.string.new_location), latitude, longitude, altitude, accuracy);
+		Toast.makeText(this, msg, Toast.LENGTH_LONG).show();		
+	}
+
+	@Override
+	public void onProviderDisabled(String provider) 
+	{
+		String msg = String.format(getResources().getString(R.string.provider_disabled), provider);
+		Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void onProviderEnabled(String provider) 
+	{
+		String msg = String.format(getResources().getString(R.string.provider_enabled), provider);
+		Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+		Log.v("ok","ok");
+	}
+
+	@Override
+	/*
+	 * (non-Javadoc)
+	 * @see android.location.LocationListener#onStatusChanged(java.lang.String, int, android.os.Bundle)
+	 * Méthode publique de type void
+	 * Elle est appellée quand le status d’une source change
+	 */
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		String newStatus = "";
+		switch (status) 
+		{
+			case LocationProvider.OUT_OF_SERVICE:
+				newStatus = "OUT_OF_SERVICE";
+				break;
+			case LocationProvider.TEMPORARILY_UNAVAILABLE:
+				newStatus = "TEMPORARILY_UNAVAILABLE";
+				break;
+			case LocationProvider.AVAILABLE:
+				newStatus = "AVAILABLE";
+				break;
+		}
+		String msg = String.format(getResources().getString(R.string.provider_disabled), provider, newStatus);
+		Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+	}
 }
