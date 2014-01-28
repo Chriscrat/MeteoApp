@@ -73,7 +73,7 @@ public class JSONParser
         } 
         catch (Exception e) 
         {
-            Log.e("Erreur du Buffer", "Erreur dans la conversion du résultat : " + e.toString());
+            Log.e("Erreur du Buffer", "Erreur  dans la conversion du résultat : " + e.toString());
         }
  
         // Tentative de conversion de String à JSONObject
