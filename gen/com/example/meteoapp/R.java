@@ -103,6 +103,7 @@ public final class R {
         public static final int day=0x7f05000d;
         public static final int fav_label=0x7f050002;
         public static final int hour=0x7f05000b;
+        public static final int load_statut=0x7f050013;
         public static final int new_location=0x7f050012;
         public static final int previsionWeekLabel=0x7f05000a;
         public static final int prevision_label=0x7f050004;

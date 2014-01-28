@@ -125,7 +125,10 @@ public class WeekOnglet extends Activity
      */
 	public void back(View v) 
 	{
-		finish();
+		super.onRestart(); //Rafraichissement de l'Activity HomePage
+	    Intent intent = new Intent(WeekOnglet.this, HomePage.class); 
+	    startActivity(intent); //Appel de l'Activity HomePage
+    	finish(); //Fermeture de l'Activity TodayOnglet
 	}
 
 }

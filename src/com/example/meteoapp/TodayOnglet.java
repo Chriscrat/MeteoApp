@@ -16,6 +16,7 @@ import java.util.TimeZone;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -33,33 +34,41 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 
 /*
  * Classe permettant de construire l'Activity TodayOnglet
  * Elle permet d'affichée des informations concernant la météo courantes (météo, temperatures) ainsi que des prévisions sur la journée
  * Cette Activity est appellée par l'Activity MeteoPage dans un onglet
  */
+@SuppressLint("HandlerLeak")
 public class TodayOnglet extends Activity 
 {
 	//Tags permettant de récuperer des variables transmis au travers d'objets Intent
 	final String CITY_SELECTED="a_city";
 	final String CP_SELECTED = "a_cp";
+	public static final String PREF_FILENAME = "cache.xml";
+	public static final String KEY = "my_data";
+	public SharedPreferences prefs;
+	private Calendar heureFrance;
+	private JSONParser jParser;	
+	private Bundle extras=null;
+	private SQLiteDatabase db;
+	private Editor editor=null;
 	
-	Bundle extras=null;
-	SQLiteDatabase db;
-
     @Override
     /*
      * (non-Javadoc)
      * @see android.app.Activity#onCreate(android.os.Bundle)
      * Méthode protégée de type void
      * Elle est invoquée à la constuction de l'Activity
-     */
+     */    
     protected void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.today_onglet);
-        
+              
         extras = getIntent().getExtras();
 		TextView cityLabel = (TextView)findViewById(R.id.selectedCity);
 		if (extras != null) 
@@ -70,7 +79,7 @@ public class TodayOnglet extends Activity
 		}					
         
         initDB();//Connexion à la base de données si existante, sinon la créer puis se connecte
-        
+
         Button favButton = (Button)findViewById(R.id.favButton);
         boolean isFavoris = checkFav(extras.getString(CITY_SELECTED)); //Vérifie si la ville est parmis les favoris
         if(isFavoris)
@@ -89,92 +98,21 @@ public class TodayOnglet extends Activity
      */
     protected void onStart()
     {
-		super.onDestroy();
+		super.onStart();
 		
-    	SimpleDateFormat formater = null;
-		Date aujourdhui = new Date();
-		formater = new SimpleDateFormat("EEEE d MMM yyyy", Locale.FRANCE);
-		String dayOfWeek = formater.format(aujourdhui); //Date du jour française
-		Log.v("date", dayOfWeek);
-	
-		//Url permettant d'obtenir l'ensemble des informations de la météo courante
-		String cityUrl = "http://api.openweathermap.org/data/2.5/weather?q="+extras.getString(CITY_SELECTED)+"&mode=json&units=metric&lang=fr";
-		Log.v("Activity today : url", cityUrl);
-
-	 	JSONParser jParser = new JSONParser();
-	 
-		JSONObject json = jParser.getJSONFromUrl(cityUrl);//Récupération d'un String JSON au travers d'un URL
-		JSONArray arrayWeather = null;
-		JSONObject objectWeather=null;
-		String weatherOfDay=null, iconWeatherOfDay = null;
-		long tempOfDay;
-		int roundTempOfDay=0;		
-		
-		try 
-		{			
-	        arrayWeather = json.getJSONArray("weather"); //Récupération d'un tableau JSONArray contenant des informations relatives à la météo		     
-	        String weather = new String(arrayWeather.getJSONObject(0).getString("description").getBytes("ISO-8859-1"), "UTF-8"); //Récupération 
-	        weatherOfDay = Html.fromHtml(weather).toString(); //Météo actuelle
-	        
-        	iconWeatherOfDay = arrayWeather.getJSONObject(0).getString("icon"); //Nom de l'image représentant la météo
-        	//Log.v("Icon", iconWeatherOfDay);
-        	
-        	objectWeather = json.getJSONObject("main"); //Récupération d'un objet JSONObject contenant des informations sur la temperature
-        	tempOfDay = objectWeather.getLong("temp"); //Temperature actuelle
-        	roundTempOfDay = (int)Math.round(tempOfDay); //Temperature actuelle arrondie
-        	//Log.v("Temperature", tempOfDay);
-	        	
-		} 
-		catch (JSONException e) 
+		//Chargement du fichier de préférences.
+		prefs = getSharedPreferences(PREF_FILENAME, MODE_PRIVATE);
+		if(prefs.getString(KEY, null)!=null)
 		{
-		    e.printStackTrace();
-		    
-		} 
-		catch (UnsupportedEncodingException e) 
-		{
-			e.printStackTrace();
+			Log.v("Cache", "Chargement");
+			loadCache();
 		}
-		
-		
-		Calendar heureFrance = Calendar.getInstance();		 
-	    heureFrance.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
-		String hourOfDay  = heureFrance.get(Calendar.HOUR_OF_DAY)+":"+heureFrance.get(Calendar.MINUTE); //Heure du jour	
-
-		TextView currentDate, currentHour, currentWeather, currentTemp;
-		currentDate = (TextView)findViewById(R.id.dateLabel);
-		currentHour = (TextView)findViewById(R.id.hourLabel);
-		currentWeather = (TextView)findViewById(R.id.weatherLabel);
-		currentTemp = (TextView)findViewById(R.id.currentTemperature);
-		
-		//Affichage des variables récupérées dans les TextViews
-		currentDate.setText(dayOfWeek);
-		currentHour.setText(hourOfDay);
-		currentWeather.setText(weatherOfDay);
-		currentTemp.setText(Integer.toString(roundTempOfDay)+" C°");
-		
-		ImageView meteoView = (ImageView)findViewById(R.id.meteoView);
-		String iconUrl = "http://openweathermap.org/img/w/"+iconWeatherOfDay+".png";//URL permettant de récupérée l'image de la météo actuelle
-		Log.v("TodayOnglet", iconUrl);
-		
-		URL myFileUrl;
-		InputStream is = null;
-		try {
-			myFileUrl = new URL (iconUrl);
-		    HttpURLConnection conn = (HttpURLConnection) myFileUrl.openConnection();
-		    conn.setDoInput(true);
-		    conn.connect();		 
-		    is = conn.getInputStream();//Récupération de l'image
-		} 
-		catch (MalformedURLException e) 
+		else
 		{
-			e.printStackTrace();
-			
+			editor = prefs.edit();
+			Log.v("Cache", "Création du fichier");
+			displayToday();
 		}
-		catch (IOException e) 
-		{
-			e.printStackTrace();
-		}
-		meteoView.setImageBitmap(BitmapFactory.decodeStream(is));//Affichage de l'image téléchargée		
 		
 		String currentPrevisionCity = "http://api.openweathermap.org/data/2.5/forecast/city?q="+extras.getString(CITY_SELECTED)+"&lang=fr&units=metric"; //URL permettant d'avoir des prévisions météo sur la journée
 		Log.v("Prevision url", currentPrevisionCity);
@@ -183,27 +121,26 @@ public class TodayOnglet extends Activity
         
         //Tableau contenant l'ensemble des images météo existantes
         int[] flags = new int[]{
-                R.drawable.icon_01d,
-                R.drawable.icon_01n,
-                R.drawable.icon_02d,
-                R.drawable.icon_02n,
-                R.drawable.icon_03d,
-                R.drawable.icon_03n,
-                R.drawable.icon_04d,
-                R.drawable.icon_04n,
-                R.drawable.icon_09d,
-                R.drawable.icon_09n,
-                R.drawable.icon_10d,
-                R.drawable.icon_10n,
-                R.drawable.icon_11d,
-                R.drawable.icon_11n,
-                R.drawable.icon_13d,
-                R.drawable.icon_13n,
-                R.drawable.icon_50d,
-                R.drawable.icon_50n
-
-    };
-		json = jParser.getJSONFromUrl(currentPrevisionCity);
+        R.drawable.icon_01d,
+        R.drawable.icon_01n,
+        R.drawable.icon_02d,
+        R.drawable.icon_02n,
+        R.drawable.icon_03d,
+        R.drawable.icon_03n,
+        R.drawable.icon_04d,
+        R.drawable.icon_04n,
+        R.drawable.icon_09d,
+        R.drawable.icon_09n,
+        R.drawable.icon_10d,
+        R.drawable.icon_10n,
+        R.drawable.icon_11d,
+        R.drawable.icon_11n,
+        R.drawable.icon_13d,
+        R.drawable.icon_13n,
+        R.drawable.icon_50d,
+        R.drawable.icon_50n};
+        
+        JSONObject json = jParser.getJSONFromUrl(currentPrevisionCity);
 		JSONArray previsionArray = null;
 		String hourPrevision=null, iconPrevision=null;
 		double temperaturePrevision;
@@ -233,6 +170,7 @@ public class TodayOnglet extends Activity
 		        //Log.v("Temperature prevision", Integer.toString(roundTemp));
 		        
 		        int pos = (Integer) wi.getFlagByIconCode(iconPrevision);//Récupération de l'image en locale
+		        
 		        previsionItem = new HashMap<String, Object>();
 		        previsionItem.put("temperature", Integer.toString(roundTemp)+"C°");
 		        previsionItem.put("weather", flags[pos]);
@@ -324,7 +262,7 @@ public class TodayOnglet extends Activity
 			Toast.makeText(this, "Erreur BDD : non-connectée", Toast.LENGTH_SHORT).show(); //Affichage d'un message d'erreur
 		}
 	}
-
+	
 	@Override
 	/*
 	 * (non-Javadoc)
@@ -375,4 +313,133 @@ public class TodayOnglet extends Activity
 			Toast.makeText(this, "Erreur BDD : non-connectée", Toast.LENGTH_SHORT).show(); //Affichage d'un message d'erreur
 		}
 	}
+	
+	public void displayToday()
+	{
+				
+		SimpleDateFormat formater = null;
+		Date aujourdhui = new Date();
+		formater = new SimpleDateFormat("EEEE d MMM yyyy", Locale.FRANCE);
+		String dayOfWeek = formater.format(aujourdhui); //Date du jour française
+		Log.v("date", dayOfWeek);
+	
+		//Url permettant d'obtenir l'ensemble des informations de la météo courante
+		String cityUrl = "http://api.openweathermap.org/data/2.5/weather?q="+extras.getString(CITY_SELECTED)+"&mode=json&units=metric&lang=fr";
+		Log.v("Activity today : url", cityUrl);
+
+	 	jParser = new JSONParser();
+	 
+		JSONObject json = jParser.getJSONFromUrl(cityUrl);//Récupération d'un String JSON au travers d'un URL
+		JSONArray arrayWeather = null;
+		JSONObject objectWeather=null;
+		String weatherOfDay=null, iconWeatherOfDay = null;
+		long tempOfDay;
+		int roundTempOfDay=0;		
+		
+		try 
+		{			
+	        arrayWeather = json.getJSONArray("weather"); //Récupération d'un tableau JSONArray contenant des informations relatives à la météo		     
+	        String weather = new String(arrayWeather.getJSONObject(0).getString("description").getBytes("ISO-8859-1"), "UTF-8"); //Récupération 
+	        weatherOfDay = Html.fromHtml(weather).toString(); //Météo actuelle
+	        
+        	iconWeatherOfDay = arrayWeather.getJSONObject(0).getString("icon"); //Nom de l'image représentant la météo
+        	//Log.v("Icon", iconWeatherOfDay);
+        	
+        	objectWeather = json.getJSONObject("main"); //Récupération d'un objet JSONObject contenant des informations sur la temperature
+        	tempOfDay = objectWeather.getLong("temp"); //Temperature actuelle
+        	roundTempOfDay = (int)Math.round(tempOfDay); //Temperature actuelle arrondie
+        	//Log.v("Temperature", tempOfDay);	        	
+		} 
+		catch (JSONException e) 
+		{
+		    e.printStackTrace();		    
+		} 
+		catch (UnsupportedEncodingException e) 
+		{
+			e.printStackTrace();
+		}
+				
+		heureFrance = Calendar.getInstance();		 
+	    heureFrance.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
+		String hourOfDay  = heureFrance.get(Calendar.HOUR_OF_DAY)+":"+heureFrance.get(Calendar.MINUTE); //Heure du jour	
+
+		TextView currentDate, currentHour, currentWeather, currentTemp;
+		currentDate = (TextView)findViewById(R.id.dateLabel);
+		currentHour = (TextView)findViewById(R.id.hourLabel);
+		currentWeather = (TextView)findViewById(R.id.weatherLabel);
+		currentTemp = (TextView)findViewById(R.id.currentTemperature);
+		
+		//Affichage des variables récupérées dans les TextViews
+		currentDate.setText(dayOfWeek);
+		currentHour.setText(hourOfDay);
+		currentWeather.setText(weatherOfDay);
+		currentTemp.setText(Integer.toString(roundTempOfDay)+" C°");		
+				
+		String iconUrl = "http://openweathermap.org/img/w/"+iconWeatherOfDay+".png";//URL permettant de récupérée l'image de la météo actuelle
+		Log.v("TodayOnglet", iconUrl);
+		
+		ImageView meteoView = (ImageView)findViewById(R.id.meteoView);
+		URL myFileUrl;
+		InputStream is = null;
+		try {
+			myFileUrl = new URL (iconUrl);
+		    HttpURLConnection conn = (HttpURLConnection) myFileUrl.openConnection();
+		    conn.setDoInput(true);
+		    conn.connect();		 
+		    is = conn.getInputStream();//Récupération de l'image
+		} 
+		catch (MalformedURLException e) 
+		{
+			e.printStackTrace();			
+		}
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+		meteoView.setImageBitmap(BitmapFactory.decodeStream(is));//Affichage de l'image téléchargée
+		
+		//Sauvegarde en cache
+		editor.putString("currentDate", dayOfWeek);
+		editor.putString("currentHour", hourOfDay);
+		editor.putString("currentWeather", weatherOfDay);
+		editor.putString("currentTemp", Integer.toString(roundTempOfDay)+" C°");
+		editor.putString("iconUrl", iconUrl);		
+		editor.commit();
+	}
+	
+	public void loadCache()
+	{
+		TextView currentDate, currentHour, currentWeather, currentTemp;
+		currentDate = (TextView)findViewById(R.id.dateLabel);
+		currentHour = (TextView)findViewById(R.id.hourLabel);
+		currentWeather = (TextView)findViewById(R.id.weatherLabel);
+		currentTemp = (TextView)findViewById(R.id.currentTemperature);
+		String iconUrl = prefs.getString("iconUrl","");
+		
+		currentDate.setText(prefs.getString("currentDate", ""));
+		currentHour.setText(prefs.getString("currentHour", ""));
+		currentWeather.setText(prefs.getString("currentWeather",""));
+		currentTemp.setText(prefs.getString("currentTemp",""));
+		
+		ImageView meteoView = (ImageView)findViewById(R.id.meteoView);
+		URL myFileUrl;
+		InputStream is = null;
+		try {
+			myFileUrl = new URL (iconUrl);
+		    HttpURLConnection conn = (HttpURLConnection) myFileUrl.openConnection();
+		    conn.setDoInput(true);
+		    conn.connect();		 
+		    is = conn.getInputStream();//Récupération de l'image
+		} 
+		catch (MalformedURLException e) 
+		{
+			e.printStackTrace();			
+		}
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+		meteoView.setImageBitmap(BitmapFactory.decodeStream(is));//Affichage de l'image téléchargée
+	}
+	
 }

@@ -1,11 +1,18 @@
 package com.example.meteoapp;
 
+import com.example.meteoapp.SearchOnglet.ErrorStatus;
+
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.app.ProgressDialog;
 import android.app.TabActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.widget.TabHost;
+import android.widget.Toast;
 import android.widget.TabHost.OnTabChangeListener;
 
 /*
@@ -16,6 +23,25 @@ import android.widget.TabHost.OnTabChangeListener;
 @SuppressWarnings("deprecation")
 public class HomePage extends TabActivity //Héritage permettant l'utilisation des TabHosts pour la création d'onglet
 {
+
+	
+	protected ProgressDialog mProgressDialog;
+	private Context mContext;
+	 
+	public static final int MSG_ERR = 0;
+	public static final int MSG_CNF = 1;
+	public static final int MSG_IND = 2;
+	
+	
+	enum ErrorStatus
+	{
+		NO_ERROR, 
+		ERROR_1, 
+		ERROR_2
+	};
+	
+	private ErrorStatus status;
+	
 	@Override
 	/*
 	 * (non-Javadoc)
@@ -27,7 +53,8 @@ public class HomePage extends TabActivity //Héritage permettant l'utilisation de
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_homepage);
-        				
+		mContext = this;
+
 		Resources res = getResources(); //Déclaration d'un objet permettant de récuperer l'ensemble des ressources du projet (images, sons, etc ..)
 		final TabHost tabHost = getTabHost();
 		
@@ -67,12 +94,86 @@ public class HomePage extends TabActivity //Héritage permettant l'utilisation de
         	 */
 			public void onTabChanged(String tabId) 
 			{
-			     for(int i=0;i<tabHost.getTabWidget().getChildCount();i++)
-			        {
-			           tabHost.getTabWidget().getChildAt(i).setBackgroundColor(Color.parseColor("#dedede")); //Code couleur pour l'onglet non-sélectionné
-			        }
-			        tabHost.getTabWidget().getChildAt(tabHost.getCurrentTab()).setBackgroundColor(Color.parseColor("#78c8e3")); //Code couleur pour l'onglet sélectionné
+	        	compute();
+			    for(int i=0;i<tabHost.getTabWidget().getChildCount();i++)
+		        {
+		           tabHost.getTabWidget().getChildAt(i).setBackgroundColor(Color.parseColor("#dedede")); //Code couleur pour l'onglet non-sélectionné
+		        }
+		        tabHost.getTabWidget().getChildAt(tabHost.getCurrentTab()).setBackgroundColor(Color.parseColor("#78c8e3")); //Code couleur pour l'onglet sélectionné
 			}
 		}));
 	}
+	
+	/*
+	 * Méthode privée de type void
+	 */
+	private void compute() 
+	{
+		mProgressDialog = ProgressDialog.show(this, "Informations", "Traitements en cours ...", true);		
+	    // useful code, variables declarations...
+	    new Thread((new Runnable() 
+	    {
+	        @Override
+	        public void run() 
+	        {
+	            Message msg = null;
+	 
+                String progressBarData = "Traitements en cours ...";
+                mProgressDialog.setMessage(progressBarData);
+ 
+                // populates the message
+                msg = mHandler.obtainMessage(MSG_IND, (Object) progressBarData);
+ 
+                // sends the message to our handler
+                mHandler.sendMessage(msg);
+                
+                msg = mHandler.obtainMessage(MSG_CNF, "Chargement terminé !");
+                
+                // sends the message to our handler
+                mHandler.sendMessage(msg);
+	        }
+	    })).start();
+	}
+	
+	final Handler mHandler = new Handler() 
+	{
+		/*
+		 * (non-Javadoc)
+		 * @see android.os.Handler#handleMessage(android.os.Message)
+		 * Méthode publique de type void
+		 */
+	    public void handleMessage(Message msg) {
+	        String text2display = null;
+	        switch (msg.what) 
+	        {
+		        case MSG_IND:
+		            if (mProgressDialog.isShowing()) 
+		            {
+		                mProgressDialog.setMessage(((String) msg.obj));
+		            }
+		            break;
+		            
+		        case MSG_ERR:
+		            text2display = (String) msg.obj;
+		            Toast.makeText(mContext, "Error: " + text2display, Toast.LENGTH_LONG).show();
+		            if (mProgressDialog.isShowing()) 
+		            {
+		                mProgressDialog.dismiss();
+		            }
+		            break;
+		            
+		        case MSG_CNF:
+		            text2display = (String) msg.obj;
+		            //Toast.makeText(mContext, "Info: " + text2display, Toast.LENGTH_LONG).show();
+		            if (mProgressDialog.isShowing()) 
+		            {
+		                mProgressDialog.dismiss();
+		            }
+		            break;
+		            
+		        default: // should never happen
+		            break;
+	        }
+	    }
+	};
 }

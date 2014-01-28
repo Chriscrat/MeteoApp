@@ -18,11 +18,13 @@
 	         android:layout_height="fill_parent"
 	         android:textSize="16sp"
 	         android:textStyle="bold"
+	         android:text="test"
 	         />
  
 	    <TextView android:id="@+id/cityPostalCode"
 	         android:layout_width="fill_parent"
-	         android:layout_height="fill_parent"/>
+	         android:layout_height="fill_parent"
+	         android:text="test2"/>
     </LinearLayout>
     
 		<ImageView
